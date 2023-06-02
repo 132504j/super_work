@@ -1,0 +1,7 @@
+{
+  "name": "support_work",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "vue-vite"
+}
