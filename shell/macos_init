@@ -1,0 +1,8 @@
+sudo npm i
+cd ios
+cd App
+pod install
+cd ..
+cd ..
+sudo ionic capacitor copy ios
+sudo npx cap sync
