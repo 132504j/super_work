@@ -46,6 +46,9 @@ onBeforeMount(() => {
     StatusBar.setStyle({
         style: Style.Dark
     })
+    StatusBar.setOverlaysWebView({
+        overlay: false
+    })
 })
 </script>
 
