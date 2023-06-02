@@ -1,7 +1,7 @@
 <template>
     <ion-page>
         <ion-header class="ion-no-border">
-            <van-nav-bar title="工作台">
+            <van-nav-bar title="工作台" safe-area-inset-top>
                 <template #left>
                     <van-icon name="wap-nav"/>
                 </template>
@@ -45,9 +45,6 @@ onBeforeMount(() => {
     })
     StatusBar.setStyle({
         style: Style.Dark
-    })
-    StatusBar.setOverlaysWebView({
-        overlay: false
     })
 })
 </script>
