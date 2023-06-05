@@ -97,7 +97,19 @@
                 </van-grid>
             </div>
 
-            <van-button class="todo-add">a</van-button>
+            <div class="button-warp">
+                <div class="item">
+                    <van-button class="todo-add" type="primary" block>
+                        <van-icon name="plus" size="1rem"/>
+                        添加任务
+                    </van-button>
+                </div>
+                <div class="item">
+                    <van-button class="todo-add">
+                        <van-icon name="chat-o" badge="9" size="1rem"/>
+                    </van-button>
+                </div>
+            </div>
         </ion-content>
     </ion-page>
 </template>
@@ -109,8 +121,6 @@ import {StatusBar, Style} from '@capacitor/status-bar'
 import AppTheme from '@/libs/AppTheme.js'
 import VanNavBar from 'vant/es/nav-bar'
 import VanIcon from 'vant/es/icon'
-import VanTabs from 'vant/es/tabs'
-import VanTab from 'vant/es/tab'
 import VanButton from 'vant/es/button'
 import AppCard from '@/components/AppCard.vue'
 import VanRow from 'vant/es/row'
@@ -211,11 +221,29 @@ const taskFinishTotal = computed(() => taskLevel1FinishTotal.value + taskLevel2F
             color: #353637;
             font-weight: 600;
         }
+    }
+
+    .button-warp {
+        display: flex;
+        position: absolute;
+        left: 1rem;
+        bottom: 1.5rem;
+        width: 23rem;
+
+        .item {
+
+            width: 19rem;
+
+            &:nth-of-type(2) {
+                display: flex;
+                justify-content: flex-end;
+                width: 4rem;
+            }
+        }
 
         .van-button {
-            position: absolute;
-            left: 1rem;
-            bottom: 4rem;
+
+            box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04);
         }
     }
 }
