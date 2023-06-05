@@ -8,7 +8,7 @@
             </van-nav-bar>
             <div class="tabs">
                 <div class="item">
-                    <van-icon name="todo-list-o"/>
+                    <img src="../assets/images/todo-line2.png"/>
                     Todo
                 </div>
                 <div class="item">
@@ -25,7 +25,9 @@
             <div class="page">
                 <app-card
                         width="23rem"
-                        style="margin: 1rem;padding: 1rem"
+                        boxShadow
+                        :border="false"
+                        style="margin: 1rem;padding: 1rem;"
                 >
                     <van-row>
                         <van-col :span="13" style="display: flex;justify-content: center">
@@ -62,6 +64,37 @@
                         </van-col>
                     </van-row>
                 </app-card>
+
+                <van-grid :border="false">
+                    <van-grid-item>
+                        <div class="app-item">
+                            <div class="image-warp">
+                                <img src="../assets/images/sports2.png"/>
+                            </div>
+                            运动打卡
+                        </div>
+                    </van-grid-item>
+                    <van-grid-item>
+                        <div class="app-item">
+                            <div class="image-warp">
+                                <img src="../assets/images/todo-line.png"/>
+                            </div>
+                            Todo
+                        </div>
+                    </van-grid-item>
+                    <!--                    <van-grid-item>-->
+                    <!--                        <div class="app-item">-->
+                    <!--                            <img src="../assets/images/water.png"/>-->
+                    <!--                            喝水啦-->
+                    <!--                        </div>-->
+                    <!--                    </van-grid-item>-->
+                    <!--                    <van-grid-item>-->
+                    <!--                        <div class="app-item">-->
+                    <!--                            <img src="../assets/images/sports.png"/>-->
+                    <!--                            运动打卡-->
+                    <!--                        </div>-->
+                    <!--                    </van-grid-item>-->
+                </van-grid>
             </div>
 
             <van-button class="todo-add">a</van-button>
@@ -83,6 +116,8 @@ import AppCard from '@/components/AppCard.vue'
 import VanRow from 'vant/es/row'
 import VanCol from 'vant/es/col'
 import VanCircle from 'vant/es/circle'
+import VanGrid from 'vant/es/grid'
+import VanGridItem from 'vant/es/grid-item'
 
 onBeforeMount(() => {
     StatusBar.setBackgroundColor({
@@ -154,6 +189,12 @@ const taskFinishTotal = computed(() => taskLevel1FinishTotal.value + taskLevel2F
         .van-icon {
             margin-right: 0.5rem;
         }
+
+        img {
+            display: block;
+            margin-right: 0.5rem;
+            width: 20px;
+        }
     }
 }
 
@@ -176,6 +217,30 @@ const taskFinishTotal = computed(() => taskLevel1FinishTotal.value + taskLevel2F
             left: 1rem;
             bottom: 4rem;
         }
+    }
+}
+
+.app-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    font-size: 0.8rem;
+
+    .image-warp {
+        margin-bottom: 0.5rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: var(--theme-color);
+        width: 3rem;
+        height: 3rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04);
+    }
+
+    img {
+        width: 2.4rem;
     }
 }
 </style>
