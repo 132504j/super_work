@@ -227,11 +227,10 @@ const taskFinishTotal = computed(() => taskLevel1FinishTotal.value + taskLevel2F
         display: flex;
         position: absolute;
         left: 1rem;
-        bottom: 1.5rem;
+        bottom: 1rem;
         width: 23rem;
 
         .item {
-
             width: 19rem;
 
             &:nth-of-type(2) {
