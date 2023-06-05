@@ -37,6 +37,7 @@
                                     size="8rem"
                                     layer-color="#f2f2f2"
                                     :text="'全部任务' + taskTotal"
+                                    style="box-sizing: content-box;padding-right: 4px"
                             />
                         </van-col>
                         <van-col :span="10">
@@ -58,6 +59,7 @@
                                             :color="item.color"
                                             layer-color="#f2f2f2"
                                             :text="taskLevel1Total + ''"
+                                            style="box-sizing: content-box;padding-right: 4px"
                                     />
                                 </van-col>
                             </van-row>
