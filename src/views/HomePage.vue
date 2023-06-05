@@ -30,7 +30,7 @@
                         style="margin: 1rem;padding: 1rem;"
                 >
                     <van-row>
-                        <van-col :span="13" style="display: flex;justify-content: center">
+                        <van-col :span="13" style="display: flex;justify-content: center;padding-right: 4px;">
                             <van-circle
                                     :current-rate="taskFinishTotal / taskTotal * 100"
                                     :speed="1000"
@@ -49,7 +49,7 @@
                                             {taskLevel4Total, taskLevel4FinishTotal, color: 'var(--ion-color-medium)'},
                                         ]"
                                         :span="12"
-                                        style="display: flex;justify-content: center;margin: 0.5rem 0;"
+                                        style="display: flex;justify-content: center;margin: 0.5rem 0;padding-right: 4px;"
                                 >
                                     <van-circle
                                             :current-rate="taskFinishTotal / taskTotal * 100"
