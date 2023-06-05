@@ -23,7 +23,45 @@
         </ion-header>
         <ion-content class="page-warp">
             <div class="page">
-                <div class="date">6月3日&nbsp;&nbsp;&nbsp;星期五</div>
+                <app-card
+                        width="23rem"
+                        style="margin: 1rem;padding: 1rem"
+                >
+                    <van-row>
+                        <van-col :span="13" style="display: flex;justify-content: center">
+                            <van-circle
+                                    :current-rate="taskFinishTotal / taskTotal * 100"
+                                    :speed="1000"
+                                    size="8rem"
+                                    layer-color="#f2f2f2"
+                                    :text="'全部任务' + taskTotal"
+                            />
+                        </van-col>
+                        <van-col :span="10">
+                            <van-row>
+                                <van-col
+                                        v-for="(item, index) in [
+                                            {taskLevel1Total, taskLevel1FinishTotal, color: 'var(--ion-color-success)'},
+                                            {taskLevel2Total, taskLevel2FinishTotal, color: 'var(--ion-color-warning)'},
+                                            {taskLevel3Total, taskLevel3FinishTotal, color: 'var(--ion-color-danger)'},
+                                            {taskLevel4Total, taskLevel4FinishTotal, color: 'var(--ion-color-medium)'},
+                                        ]"
+                                        :span="12"
+                                        style="display: flex;justify-content: center;margin: 0.5rem 0;"
+                                >
+                                    <van-circle
+                                            :current-rate="taskFinishTotal / taskTotal * 100"
+                                            :speed="1000"
+                                            size="3rem"
+                                            :color="item.color"
+                                            layer-color="#f2f2f2"
+                                            :text="taskLevel1Total + ''"
+                                    />
+                                </van-col>
+                            </van-row>
+                        </van-col>
+                    </van-row>
+                </app-card>
             </div>
 
             <van-button class="todo-add">a</van-button>
@@ -33,7 +71,7 @@
 
 <script setup>
 import {IonContent, IonPage, IonHeader} from '@ionic/vue'
-import {onBeforeMount} from 'vue'
+import {computed, onBeforeMount, ref} from 'vue'
 import {StatusBar, Style} from '@capacitor/status-bar'
 import AppTheme from '@/libs/AppTheme.js'
 import VanNavBar from 'vant/es/nav-bar'
@@ -41,6 +79,10 @@ import VanIcon from 'vant/es/icon'
 import VanTabs from 'vant/es/tabs'
 import VanTab from 'vant/es/tab'
 import VanButton from 'vant/es/button'
+import AppCard from '@/components/AppCard.vue'
+import VanRow from 'vant/es/row'
+import VanCol from 'vant/es/col'
+import VanCircle from 'vant/es/circle'
 
 onBeforeMount(() => {
     StatusBar.setBackgroundColor({
@@ -50,6 +92,28 @@ onBeforeMount(() => {
         style: Style.Dark
     })
 })
+
+// 等级1任务总数
+const taskLevel1Total = ref(10)
+// 等级1任务完成总数
+const taskLevel1FinishTotal = ref(6)
+// 等级2任务总数
+const taskLevel2Total = ref(10)
+// 等级2任务完成总数
+const taskLevel2FinishTotal = ref(7)
+// 等级3任务总数
+const taskLevel3Total = ref(10)
+// 等级3任务完成总数
+const taskLevel3FinishTotal = ref(8)
+// 等级4任务总数
+const taskLevel4Total = ref(10)
+// 等级4任务完成总数
+const taskLevel4FinishTotal = ref(9)
+// 任务总数
+
+const taskTotal = computed(() => taskLevel1Total.value + taskLevel2Total.value + taskLevel3Total.value + taskLevel4Total.value)
+// 完成任务总数
+const taskFinishTotal = computed(() => taskLevel1FinishTotal.value + taskLevel2FinishTotal.value + taskLevel3FinishTotal.value + taskLevel4FinishTotal.value)
 </script>
 
 <style scoped lang="less">

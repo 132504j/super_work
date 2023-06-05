@@ -4,7 +4,7 @@
     "version": "0.0.1",
     "type": "module",
     "scripts": {
-        "dev:android": "ionic capacitor copy android && ionic capacitor run android -l --external --host=192.168.31.100",
+        "dev:android": "ionic capacitor copy android && ionic capacitor run android -l --external",
         "build:android": "ionic capacitor build android",
         "preview": "vite preview"
     },
@@ -23,6 +23,7 @@
         "less": "^4.1.3",
         "less-loader": "^11.1.2",
         "vant": "^4.4.1",
+        "vconsole": "^3.15.1",
         "vue": "^3.2.45",
         "vue-router": "^4.1.6"
     },

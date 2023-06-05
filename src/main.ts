@@ -17,6 +17,9 @@ import './App.less'
 import './theme/variables.css'
 import 'vant/lib/index.css'
 
+import VConsole from 'vconsole'
+new VConsole()
+
 const app = createApp(App)
     .use(IonicVue)
     .use(router)
