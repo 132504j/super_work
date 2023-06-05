@@ -6,20 +6,20 @@
                     <van-icon name="wap-nav"/>
                 </template>
             </van-nav-bar>
-            <div class="tabs">
-                <div class="item">
-                    <img src="../assets/images/todo-line2.png"/>
-                    Todo
-                </div>
-                <div class="item">
-                    <van-icon name="orders-o"/>
-                    项目
-                </div>
-                <div class="item">
-                    <van-icon name="calendar-o"/>
-                    日历
-                </div>
-            </div>
+            <!--            <div class="tabs">-->
+            <!--                <div class="item">-->
+            <!--                    <img src="../assets/images/todo-line2.png"/>-->
+            <!--                    Todo-->
+            <!--                </div>-->
+            <!--                <div class="item">-->
+            <!--                    <van-icon name="orders-o"/>-->
+            <!--                    项目-->
+            <!--                </div>-->
+            <!--                <div class="item">-->
+            <!--                    <van-icon name="calendar-o"/>-->
+            <!--                    日历-->
+            <!--                </div>-->
+            <!--            </div>-->
         </ion-header>
         <ion-content class="page-warp">
             <div class="page">
@@ -27,7 +27,7 @@
                         width="23rem"
                         boxShadow
                         :border="false"
-                        style="margin: 1rem;padding: 1rem;"
+                        style="margin: 1rem;padding: 1rem;background-color: rgba(166,201,255,0.05);"
                 >
                     <van-row>
                         <van-col :span="13" style="display: flex;justify-content: center;padding-right: 4px;">
@@ -68,38 +68,26 @@
                 </app-card>
 
                 <van-grid :border="false">
-                    <van-grid-item>
+                    <van-grid-item
+                            v-for="(item, index) in apps"
+                            :key="index"
+                    >
                         <div class="app-item">
-                            <div class="image-warp">
-                                <img src="../assets/images/sports2.png"/>
+                            <div
+                                    class="image-warp"
+                                    :style="{
+                                        backgroundColor: item. iconBackgroundColor
+                                    }"
+                            >
+                                <img :src="item.icon"/>
                             </div>
-                            运动打卡
+                            {{ item.name }}
                         </div>
                     </van-grid-item>
-                    <van-grid-item>
-                        <div class="app-item">
-                            <div class="image-warp">
-                                <img src="../assets/images/todo-line.png"/>
-                            </div>
-                            Todo
-                        </div>
-                    </van-grid-item>
-                    <!--                    <van-grid-item>-->
-                    <!--                        <div class="app-item">-->
-                    <!--                            <img src="../assets/images/water.png"/>-->
-                    <!--                            喝水啦-->
-                    <!--                        </div>-->
-                    <!--                    </van-grid-item>-->
-                    <!--                    <van-grid-item>-->
-                    <!--                        <div class="app-item">-->
-                    <!--                            <img src="../assets/images/sports.png"/>-->
-                    <!--                            运动打卡-->
-                    <!--                        </div>-->
-                    <!--                    </van-grid-item>-->
                 </van-grid>
             </div>
 
-            <div class="button-warp van-safe-area-bottom">
+            <app-safe-bottom class="button-warp">
                 <div class="item">
                     <van-button class="todo-add" type="primary" block>
                         <van-icon name="plus" size="1rem"/>
@@ -111,14 +99,14 @@
                         <van-icon name="chat-o" badge="9" size="1rem"/>
                     </van-button>
                 </div>
-            </div>
+            </app-safe-bottom>
         </ion-content>
     </ion-page>
 </template>
 
 <script setup>
 import {IonContent, IonPage, IonHeader} from '@ionic/vue'
-import {computed, onBeforeMount, ref} from 'vue'
+import {computed, onBeforeMount, onMounted, ref} from 'vue'
 import {StatusBar, Style} from '@capacitor/status-bar'
 import AppTheme from '@/libs/AppTheme.js'
 import VanNavBar from 'vant/es/nav-bar'
@@ -130,6 +118,8 @@ import VanCol from 'vant/es/col'
 import VanCircle from 'vant/es/circle'
 import VanGrid from 'vant/es/grid'
 import VanGridItem from 'vant/es/grid-item'
+import AppSafeBottom from '@/components/AppSafeBottom.vue'
+import ApplicationService from '@/services/ApplicationService.js'
 
 onBeforeMount(() => {
     StatusBar.setBackgroundColor({
@@ -161,6 +151,15 @@ const taskLevel4FinishTotal = ref(9)
 const taskTotal = computed(() => taskLevel1Total.value + taskLevel2Total.value + taskLevel3Total.value + taskLevel4Total.value)
 // 完成任务总数
 const taskFinishTotal = computed(() => taskLevel1FinishTotal.value + taskLevel2FinishTotal.value + taskLevel3FinishTotal.value + taskLevel4FinishTotal.value)
+
+// app列表
+const apps = ref([])
+
+onMounted(async () => {
+    apps.value = await ApplicationService.getAllApp()
+    console.log(JSON.parse(JSON.stringify(apps.value)))
+})
+
 </script>
 
 <style scoped lang="less">

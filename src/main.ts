@@ -16,8 +16,10 @@ import '@ionic/vue/css/display.css'
 import './App.less'
 import './theme/variables.css'
 import 'vant/lib/index.css'
+import './theme/vany.less'
 
 import VConsole from 'vconsole'
+
 new VConsole()
 
 const app = createApp(App)
