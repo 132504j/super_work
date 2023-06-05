@@ -21,10 +21,12 @@
                 </div>
             </div>
         </ion-header>
-        <ion-content>
+        <ion-content class="page-warp">
             <div class="page">
-
+                <div class="date">6月3日&nbsp;&nbsp;&nbsp;星期五</div>
             </div>
+
+            <van-button class="todo-add">a</van-button>
         </ion-content>
     </ion-page>
 </template>
@@ -38,6 +40,7 @@ import VanNavBar from 'vant/es/nav-bar'
 import VanIcon from 'vant/es/icon'
 import VanTabs from 'vant/es/tabs'
 import VanTab from 'vant/es/tab'
+import VanButton from 'vant/es/button'
 
 onBeforeMount(() => {
     StatusBar.setBackgroundColor({
@@ -76,7 +79,7 @@ onBeforeMount(() => {
         justify-content: center;
         align-items: center;
         flex: 1;
-        border-right: 1px #8a8a8a solid;
+        border-right: 1px #e5e5e5 solid;
         color: #323232;
         font-size: 16px;
 
@@ -86,6 +89,28 @@ onBeforeMount(() => {
 
         .van-icon {
             margin-right: 0.5rem;
+        }
+    }
+}
+
+.page-warp {
+    position: relative;
+
+    .page {
+        padding-top: 8px;
+        min-height: 100%;
+
+        .date {
+            padding: 8px 16px;
+            font-size: 1.6rem;
+            color: #353637;
+            font-weight: 600;
+        }
+
+        .van-button {
+            position: absolute;
+            left: 1rem;
+            bottom: 4rem;
         }
     }
 }
