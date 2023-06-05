@@ -97,7 +97,7 @@
                 </van-grid>
             </div>
 
-            <div class="button-warp">
+            <div class="button-warp van-safe-area-bottom">
                 <div class="item">
                     <van-button class="todo-add" type="primary" block>
                         <van-icon name="plus" size="1rem"/>
@@ -242,10 +242,11 @@ const taskFinishTotal = computed(() => taskLevel1FinishTotal.value + taskLevel2F
         }
 
         .van-button {
-
             box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04);
         }
     }
+
+
 }
 
 .app-item {
