@@ -1,5 +1,5 @@
 <template>
-    <div class="van-safe-area-bottom">
+    <div class="app-safe-bottom van-safe-area-bottom">
         <slot/>
     </div>
 </template>

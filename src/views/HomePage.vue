@@ -1,7 +1,12 @@
 <template>
     <ion-page>
         <ion-header class="ion-no-border">
-            <van-nav-bar title="工作台" safe-area-inset-top>
+            <van-nav-bar safe-area-inset-top>
+                <template #title>
+                    <div class="logo">
+                        <img src="../assets/images/superpowers2.png"/>Super Work
+                    </div>
+                </template>
                 <template #left>
                     <van-icon name="wap-nav"/>
                 </template>
@@ -72,7 +77,12 @@
                             v-for="(item, index) in apps"
                             :key="index"
                     >
-                        <div class="app-item">
+                        <div
+                                class="app-item"
+                                @click="() => {
+                                    if(item.routePath) ionRouter.push(item.routePath)
+                                }"
+                        >
                             <div
                                     class="image-warp"
                                     :style="{
@@ -89,7 +99,7 @@
 
             <app-safe-bottom class="button-warp">
                 <div class="item">
-                    <van-button class="todo-add" type="primary" block>
+                    <van-button class="todo-add" type="primary" block @click="AppToast.showToast('xx')">
                         <van-icon name="plus" size="1rem"/>
                         添加任务
                     </van-button>
@@ -106,9 +116,7 @@
 
 <script setup>
 import {IonContent, IonPage, IonHeader} from '@ionic/vue'
-import {computed, onBeforeMount, onMounted, ref} from 'vue'
-import {StatusBar, Style} from '@capacitor/status-bar'
-import AppTheme from '@/libs/AppTheme.js'
+import {computed, onMounted, ref} from 'vue'
 import VanNavBar from 'vant/es/nav-bar'
 import VanIcon from 'vant/es/icon'
 import VanButton from 'vant/es/button'
@@ -119,16 +127,11 @@ import VanCircle from 'vant/es/circle'
 import VanGrid from 'vant/es/grid'
 import VanGridItem from 'vant/es/grid-item'
 import AppSafeBottom from '@/components/AppSafeBottom.vue'
-import ApplicationService from '@/services/ApplicationService.js'
+import ApplicationService from '@/services/v1/ApplicationService.js'
+import AppToast from '@/components/AppToast.js'
+import {useIonRouter} from '@ionic/vue'
 
-onBeforeMount(() => {
-    StatusBar.setBackgroundColor({
-        color: AppTheme.themeColor
-    })
-    StatusBar.setStyle({
-        style: Style.Dark
-    })
-})
+const ionRouter = useIonRouter()
 
 // 等级1任务总数
 const taskLevel1Total = ref(10)
@@ -270,6 +273,17 @@ onMounted(async () => {
 
     img {
         width: 2.4rem;
+    }
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+
+
+    img {
+        margin-right: 8px;
+        width: 16px;
     }
 }
 </style>
