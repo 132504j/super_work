@@ -99,7 +99,7 @@
 
             <app-safe-bottom class="button-warp">
                 <div class="item">
-                    <van-button class="todo-add" type="primary" block @click="AppToast.showToast('xx')">
+                    <van-button class="todo-add" type="primary" block @click="AddTodo.show()">
                         <van-icon name="plus" size="1rem"/>
                         添加任务
                     </van-button>
@@ -130,6 +130,8 @@ import AppSafeBottom from '@/components/AppSafeBottom.vue'
 import ApplicationService from '@/services/v1/ApplicationService.js'
 import AppToast from '@/components/AppToast.js'
 import {useIonRouter} from '@ionic/vue'
+import AddTodo from '@/application/todo/utils/addTodo/AddTodo.js'
+import TodoService from '@/application/todo/services/TodoService.js'
 
 const ionRouter = useIonRouter()
 

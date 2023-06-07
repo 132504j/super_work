@@ -30,7 +30,10 @@ const routes = [
         path: '/todo',
         component: () => import('@/application/todo/IndexPage.vue'),
         meta: {
-            statusBar: {}
+            statusBar: {
+                backgroundColor: AppTheme.themeColor,
+                style: 'dark'
+            }
         }
     }
 ]
