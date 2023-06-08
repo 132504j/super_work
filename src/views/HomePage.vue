@@ -116,9 +116,8 @@ const todayStatisticsRef = ref(null)
 
 onMounted(async () => {
     apps.value = await ApplicationService.getAllApp()
-    console.log(JSON.parse(JSON.stringify(apps.value)))
+    todayStatisticsRef.value.init()
 })
-
 </script>
 
 <style scoped lang="less">
