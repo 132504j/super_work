@@ -1,7 +1,12 @@
 <template>
     <ion-page>
-        <ion-content fullscreen>
-            <div class="page">
+        <ion-content fullscreen class="van-safe-area-bottom">
+            <div
+                    class="page"
+                    :style="{
+                        backgroundImage: `url(${getNowTheme.cover})`
+                    }"
+            >
                 <van-nav-bar safe-area-inset-top>
                     <template #left>
                         <van-icon
@@ -20,10 +25,15 @@
                         <img src="./images/theme.png" class="cover-icon" @click="isShowThemeList = true"/>
                     </template>
                 </van-nav-bar>
-                <div class="list-warp" ref="listWarpRef">
+                <div
+                        class="list-warp"
+                        ref="listWarpRef"
+                        :class="{
+                            iphonex: (appDevice === 'ios') && isIphoneX
+                        }"
+                >
                     <h2>我的一天</h2>
                     <h3>{{ subTitle }}</h3>
-
                     <div
                             v-for="(item, index) in getUndoTaskList"
                             :key="item.id"
@@ -74,7 +84,7 @@
                                     :key="item.id"
                                     class="card"
                                     :class="{
-                                        remove: !!item.remove || no-animation
+                                        remove: !!item.remove
                                     }"
                                     :style="{
                                         animationDelay: `${index * 100}ms`
@@ -116,15 +126,28 @@
 
                 <van-popup v-model:show="isShowThemeList" position="bottom" round>
                     <van-nav-bar title="切换主题" class="theme-nav-bar"></van-nav-bar>
-                    <div class="theme-warp">
-                        <div v-for="(item, index) in themeList" :key="index" class="item choose">
+                    <app-safe-bottom style="position: static">
+                        <div
+                                class="theme-warp"
+                                :class="{
+                                    iphonex: (appDevice === 'ios') && isIphoneX
+                                }"
+                        >
                             <div
-                                    class="cover"
+                                    v-for="(item, index) in themeList"
+                                    :key="index"
+                                    class="item"
+                                    :class="{
+                                        choose: item.isChoose
+                                    }"
+                                    @click="() => chooseTheme(item)"
                             >
-                                <img :src="item.cover"/>
+                                <div class="cover">
+                                    <img :src="item.cover"/>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    </app-safe-bottom>
                 </van-popup>
             </div>
         </ion-content>
@@ -134,7 +157,7 @@
 <script setup async>
 import {IonPage, IonContent} from '@ionic/vue'
 import VanNavBar from 'vant/es/nav-bar'
-import {computed, onBeforeUnmount, onMounted, ref} from 'vue'
+import {computed, onBeforeMount, onBeforeUnmount, onMounted, ref} from 'vue'
 import {Style} from '@capacitor/status-bar'
 import VanIcon from 'vant/es/icon'
 import {useIonRouter} from '@ionic/vue'
@@ -148,7 +171,8 @@ import background1 from './images/background1.png'
 import background2 from './images/background2.png'
 import background3 from './images/background3.png'
 import VanPopup from 'vant/es/popup'
-
+import AppBase from '@/libs/AppBase.js'
+import AppStatusBar from '@/components/AppStatusBar.js'
 
 const ionRouter = useIonRouter()
 
@@ -166,29 +190,39 @@ const isShowFinish = ref(false)
 // 主题列表
 const themeList = ref([
     {
+        name: '1',
         cover: ref(background1),
         statusBar: {
             backgroundColor: '#0b183b',
             style: Style.Light
-        }
+        },
+        isChoose: false
     },
     {
+        name: '2',
         cover: ref(background2),
         statusBar: {
             backgroundColor: '#fd8f8b',
             style: Style.Light
-        }
+        },
+        isChoose: false
     },
     {
+        name: '3',
         cover: ref(background3),
         statusBar: {
-            backgroundColor: '#000002',
+            backgroundColor: '#5e6fd6',
             style: Style.Light
-        }
+        },
+        isChoose: false
     }
 ])
 // 是否显示选择主题
 const isShowThemeList = ref(false)
+// app环境
+const appDevice = ref('ios')
+// 是否为iphonex
+const isIphoneX = ref(false)
 
 // methods
 /**
@@ -238,6 +272,23 @@ const undo = async (item) => {
         taskList.value = await TodoService.getList({date: new Date})
     }, 300)
 }
+/**
+ * 选择主题
+ * @param item {{
+ *     name: string
+ * }}
+ * @returns {Promise<void>}
+ */
+const chooseTheme = async (item) => {
+    themeList.value.forEach(v => {
+        v.isChoose = false
+    })
+    const theme = themeList.value.find(v => v.name === item.name)
+    theme.isChoose = true
+    AppStatusBar.set(theme.statusBar.backgroundColor, theme.statusBar.style)
+    localStorage.setItem('todoThemeName', item.name)
+    isShowThemeList.value = false
+}
 
 // computed
 // 获取未完成的任务列表
@@ -248,24 +299,42 @@ const getUndoTaskList = computed(() => {
 const getFinishTaskList = computed(() => {
     return taskList.value.filter(v => v.state === 'finish').sort((a, b) => b.finishStamp - a.finishStamp).reverse()
 })
+// 获取当前主题
+const getNowTheme = computed(() => {
+    if (!themeList.value.find(v => v.isChoose)) {
+        return themeList[0]
+    }
+    return themeList.value.find(v => v.isChoose)
+})
 
 // 生命周期
+onBeforeMount(() => {
+    // 设定主题
+    if (!localStorage.getItem('todoThemeName')) {
+        localStorage.setItem('todoThemeName', themeList.value[0].name)
+    }
+    if (!themeList.value.find(v => v.name === localStorage.getItem('todoThemeName'))) {
+        localStorage.setItem('todoThemeName', themeList.value[0].name)
+    }
+    const theme = themeList.value.find(v => v.name === localStorage.getItem('todoThemeName'))
+    theme.isChoose = true
+    AppStatusBar.set(theme.statusBar.backgroundColor, theme.statusBar.style)
+})
 
 onMounted(async () => {
     // 监听listWarpRef的滚动
     listWarpRef.value.addEventListener('scroll', listWarpRefHandleScroll)
-    taskList.value = await TodoService.getList({date: new Date})
+    taskList.value = await TodoService.getList({date: new Date()})
+    AppBase.getAppDevice().then(device => {
+        appDevice.value = device
+        AppBase.isIphoneX().then(_isIphoneX => {
+            isIphoneX.value = _isIphoneX
+        })
+    })
 })
 
 onBeforeUnmount(() => {
     listWarpRef.value.removeEventListener('scroll', listWarpRefHandleScroll)
-
-    // 图片预加载
-    themeList.value.forEach(item => {
-        const image = new Image()
-        image.src = item.cover
-        image.onload()
-    })
 })
 </script>
 
@@ -308,19 +377,28 @@ onBeforeUnmount(() => {
 }
 
 .page {
-    background-image: url('./images/background1.png');
+    //background-image: url('./images/background1.png');
     //background-size: auto 100%;
     background-size: cover;
     background-position: right;
     height: 100%;
     overflow: hidden;
+    //background-color: green;
+    transition: all .3s;
 
     .list-warp {
+        box-sizing: border-box;
         position: relative;
-        height: calc(100% - 44px);
-        max-height: calc(100% - 44px - 5rem);
+        //background-color: red;
+        height: calc(100% - 44px - 6rem);
+        min-height: calc(100% - 44px - 6rem);
         -webkit-mask-image: -webkit-gradient(linear, top 10%, top bottom, from(rgba(0, 0, 0, 1)), to(rgba(0, 0, 0, 0)));
         overflow: auto;
+
+        &.iphonex {
+            height: calc(100% - 44px - 6rem - 34px);
+            min-height: calc(100% - 44px - 6rem - 34px);
+        }
 
         h2 {
             margin: 8px 0;
@@ -480,6 +558,11 @@ onBeforeUnmount(() => {
 .theme-warp {
     display: flex;
     flex-wrap: wrap;
+    height: auto;
+
+    &.iphonex {
+        padding-bottom: 34px;
+    }
 
     .item {
         display: flex;

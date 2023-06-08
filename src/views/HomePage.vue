@@ -28,49 +28,16 @@
         </ion-header>
         <ion-content class="page-warp">
             <div class="page">
-                <app-card
-                        width="23rem"
-                        boxShadow
-                        :border="false"
-                        style="margin: 1rem;padding: 1rem;background-color: rgba(166,201,255,0.05);"
-                >
-                    <van-row>
-                        <van-col :span="13" style="display: flex;justify-content: center;padding-right: 4px;">
-                            <van-circle
-                                    :current-rate="taskFinishTotal / taskTotal * 100"
-                                    :speed="1000"
-                                    size="8rem"
-                                    layer-color="#f2f2f2"
-                                    :text="'全部任务' + taskTotal"
-                                    style="box-sizing: content-box;padding-right: 4px"
-                            />
-                        </van-col>
-                        <van-col :span="10">
-                            <van-row>
-                                <van-col
-                                        v-for="(item, index) in [
-                                            {taskLevel1Total, taskLevel1FinishTotal, color: 'var(--ion-color-success)'},
-                                            {taskLevel2Total, taskLevel2FinishTotal, color: 'var(--ion-color-warning)'},
-                                            {taskLevel3Total, taskLevel3FinishTotal, color: 'var(--ion-color-danger)'},
-                                            {taskLevel4Total, taskLevel4FinishTotal, color: 'var(--ion-color-medium)'},
-                                        ]"
-                                        :span="12"
-                                        style="display: flex;justify-content: center;margin: 0.5rem 0;padding-right: 4px;"
-                                >
-                                    <van-circle
-                                            :current-rate="taskFinishTotal / taskTotal * 100"
-                                            :speed="1000"
-                                            size="3rem"
-                                            :color="item.color"
-                                            layer-color="#f2f2f2"
-                                            :text="taskLevel1Total + ''"
-                                            style="box-sizing: content-box;padding-right: 4px"
-                                    />
-                                </van-col>
-                            </van-row>
-                        </van-col>
-                    </van-row>
-                </app-card>
+                <div class="widget-warp">
+                    <app-card
+                            width="23rem"
+                            boxShadow
+                            :border="false"
+                            style="margin: 1rem;padding: 1rem;background-color: #ffffff"
+                    >
+                        <today-statistics ref="todayStatisticsRef"/>
+                    </app-card>
+                </div>
 
                 <van-grid :border="false">
                     <van-grid-item
@@ -80,7 +47,7 @@
                         <div
                                 class="app-item"
                                 @click="() => {
-                                    if(item.routePath) ionRouter.push(item.routePath)
+                                    ionRouter.push(item.routePath)
                                 }"
                         >
                             <div
@@ -94,12 +61,19 @@
                             {{ item.name }}
                         </div>
                     </van-grid-item>
+                    <van-grid-item/>
                 </van-grid>
             </div>
 
             <app-safe-bottom class="button-warp">
                 <div class="item">
-                    <van-button class="todo-add" type="primary" block @click="AddTodo.show()">
+                    <van-button
+                            class="todo-add"
+                            type="primary"
+                            block
+                            @click="() => {
+                                AddTodo.show(todayStatisticsRef.init)
+                            }">
                         <van-icon name="plus" size="1rem"/>
                         添加任务
                     </van-button>
@@ -132,33 +106,13 @@ import AppToast from '@/components/AppToast.js'
 import {useIonRouter} from '@ionic/vue'
 import AddTodo from '@/application/todo/utils/addTodo/AddTodo.js'
 import TodoService from '@/application/todo/services/TodoService.js'
+import TodayStatistics from '@/application/todo/widgets/TodayStatistics.vue'
 
 const ionRouter = useIonRouter()
 
-// 等级1任务总数
-const taskLevel1Total = ref(10)
-// 等级1任务完成总数
-const taskLevel1FinishTotal = ref(6)
-// 等级2任务总数
-const taskLevel2Total = ref(10)
-// 等级2任务完成总数
-const taskLevel2FinishTotal = ref(7)
-// 等级3任务总数
-const taskLevel3Total = ref(10)
-// 等级3任务完成总数
-const taskLevel3FinishTotal = ref(8)
-// 等级4任务总数
-const taskLevel4Total = ref(10)
-// 等级4任务完成总数
-const taskLevel4FinishTotal = ref(9)
-// 任务总数
-
-const taskTotal = computed(() => taskLevel1Total.value + taskLevel2Total.value + taskLevel3Total.value + taskLevel4Total.value)
-// 完成任务总数
-const taskFinishTotal = computed(() => taskLevel1FinishTotal.value + taskLevel2FinishTotal.value + taskLevel3FinishTotal.value + taskLevel4FinishTotal.value)
-
 // app列表
 const apps = ref([])
+const todayStatisticsRef = ref(null)
 
 onMounted(async () => {
     apps.value = await ApplicationService.getAllApp()
@@ -179,6 +133,10 @@ onMounted(async () => {
     & /deep/ .van-icon-wap-nav {
         color: #ffffff;
         font-size: 1.5rem;
+    }
+
+    &:after {
+        border-width: 0;
     }
 }
 
@@ -218,8 +176,8 @@ onMounted(async () => {
     position: relative;
 
     .page {
-        padding-top: 8px;
         min-height: 100%;
+        background-color: #eef4ff;
 
         .date {
             padding: 8px 16px;
@@ -286,6 +244,29 @@ onMounted(async () => {
     img {
         margin-right: 8px;
         width: 16px;
+    }
+}
+
+.van-grid {
+    margin: 0 auto;
+    width: 23rem;
+    border-radius: 8px;
+    overflow: hidden;
+    //box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04);
+}
+
+.van-grid-item {
+    & /deep/ .van-grid-item_content {
+        background-color: #eef4ff !important;
+    }
+}
+
+.widget-warp {
+    overflow: hidden;
+    background: linear-gradient(var(--theme-color) 0%, rgba(56, 128, 255, 0.1) 80%, #eef4ff 100%);
+
+    .app-card {
+        box-shadow: none !important;
     }
 }
 </style>

@@ -1,4 +1,4 @@
-import {createRouter, createWebHistory} from '@ionic/vue-router'
+import {createRouter, createWebHashHistory} from '@ionic/vue-router'
 import IndexPage from '@/views/IndexPage.vue'
 import HomePage from '@/views/HomePage.vue'
 import AppTheme from '@/libs/AppTheme.js'
@@ -39,7 +39,7 @@ const routes = [
 ]
 
 const router = createRouter({
-    history: createWebHistory(import.meta.env.BASE_URL),
+    history: createWebHashHistory(import.meta.env.BASE_URL),
     routes
 })
 
