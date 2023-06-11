@@ -107,6 +107,14 @@ import {useIonRouter} from '@ionic/vue'
 import AddTodo from '@/application/todo/utils/addTodo/AddTodo.js'
 import TodoService from '@/application/todo/services/TodoService.js'
 import TodayStatistics from '@/application/todo/widgets/TodayStatistics.vue'
+import {useRouter} from 'vue-router'
+
+const router = useRouter()
+router.afterEach(() => {
+    if (todayStatisticsRef.value) {
+        todayStatisticsRef.value.init()
+    }
+})
 
 const ionRouter = useIonRouter()
 
