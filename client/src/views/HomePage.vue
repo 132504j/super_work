@@ -78,7 +78,7 @@
                         添加任务
                     </van-button>
                 </div>
-                <div class="item">
+                <div class="item" @click="addNotice">
                     <van-button class="todo-add">
                         <van-icon name="chat-o" badge="9" size="1rem"/>
                     </van-button>
@@ -103,6 +103,7 @@ import {useIonRouter} from '@ionic/vue'
 import AddTodo from '@/application/todo/utils/addTodo/AddTodo.js'
 import TodayStatistics from '@/application/todo/widgets/TodayStatistics.vue'
 import {useRouter} from 'vue-router'
+import AppLocalNotice from '@/libs/AppLocalNotice.js'
 
 const router = useRouter()
 router.afterEach(() => {
@@ -116,6 +117,10 @@ const ionRouter = useIonRouter()
 // app列表
 const apps = ref([])
 const todayStatisticsRef = ref(null)
+
+const addNotice = () => {
+    AppLocalNotice.addNotice()
+}
 
 onMounted(async () => {
     apps.value = await ApplicationService.getAllApp()

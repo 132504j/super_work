@@ -334,17 +334,19 @@ onMounted(async () => {
         })
     })
     // 授权
-    try {
-        await AppOfflineNotice.authorization('Todo 需要授权通知！')
-    } catch (e) {
-        if (e.message === '0001') {
-            // 不管
-            console.error(AppOfflineNotice.errorCode['0001'])
-        } else if(e.message === '0002') {
-            showToast({
-                message: '您拒绝了通知授权，将无法收到通知提醒！',
-                type: 'text'
-            })
+    if ((await AppBase.getAppDevice()) === 'web') {
+        try {
+            await AppOfflineNotice.authorization('Todo 需要授权通知！')
+        } catch (e) {
+            if (e.message === '0001') {
+                // 不管
+                console.error(AppOfflineNotice.errorCode['0001'])
+            } else if (e.message === '0002') {
+                showToast({
+                    message: '您拒绝了通知授权，将无法收到通知提醒！',
+                    type: 'text'
+                })
+            }
         }
     }
 })
