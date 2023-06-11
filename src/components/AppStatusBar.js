@@ -34,13 +34,15 @@ export default class AppStatusBar {
         }
     }
 
-    static hide() {
+    static async hide() {
+        if((await AppBase.getAppDevice()) === 'web') return
         StatusBar.hide({
             animation: Animation.Fade
         })
     }
 
-    static show() {
+    static async show() {
+        if((await AppBase.getAppDevice()) === 'web') return
         StatusBar.show({
             animation: Animation.Fade
         })

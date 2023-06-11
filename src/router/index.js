@@ -43,19 +43,19 @@ const router = createRouter({
     routes
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
     // 设置状态栏颜色
     if (to.meta.statusBar) {
         // 是否隐藏状态栏
         if (to.meta.statusBar.hide) {
-            AppStatusBar.hide()
+            await AppStatusBar.hide()
         } else {
-            AppStatusBar.show()
-            AppStatusBar.set(to.meta.statusBar.backgroundColor || AppTheme.themeColor, to.meta.statusBar.style || 'dark')
+            await AppStatusBar.show()
+            await AppStatusBar.set(to.meta.statusBar.backgroundColor || AppTheme.themeColor, to.meta.statusBar.style || 'dark')
         }
     } else {
-        AppStatusBar.show()
-        AppStatusBar.set(to.meta.statusBar.backgroundColor || AppTheme.themeColor, to.meta.statusBar.style || 'dark')
+        await AppStatusBar.show()
+        await AppStatusBar.set(to.meta.statusBar.backgroundColor || AppTheme.themeColor, to.meta.statusBar.style || 'dark')
     }
     next()
 })
