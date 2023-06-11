@@ -90,22 +90,17 @@
 
 <script setup>
 import {IonContent, IonPage, IonHeader} from '@ionic/vue'
-import {computed, onMounted, ref} from 'vue'
+import {onMounted, ref} from 'vue'
 import VanNavBar from 'vant/es/nav-bar'
 import VanIcon from 'vant/es/icon'
 import VanButton from 'vant/es/button'
 import AppCard from '@/components/AppCard.vue'
-import VanRow from 'vant/es/row'
-import VanCol from 'vant/es/col'
-import VanCircle from 'vant/es/circle'
 import VanGrid from 'vant/es/grid'
 import VanGridItem from 'vant/es/grid-item'
 import AppSafeBottom from '@/components/AppSafeBottom.vue'
 import ApplicationService from '@/services/v1/ApplicationService.js'
-import AppToast from '@/components/AppToast.js'
 import {useIonRouter} from '@ionic/vue'
 import AddTodo from '@/application/todo/utils/addTodo/AddTodo.js'
-import TodoService from '@/application/todo/services/TodoService.js'
 import TodayStatistics from '@/application/todo/widgets/TodayStatistics.vue'
 import {useRouter} from 'vue-router'
 

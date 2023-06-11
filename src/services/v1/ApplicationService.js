@@ -10,8 +10,8 @@ export default {
      */
     async getAllApp() {
         return [
-            {icon: sports2, name: '运动打卡', iconBackgroundColor: 'var(--ion-color-danger)'},
             {icon: todoLine, name: 'Todo', iconBackgroundColor: 'var(--theme-color)', routePath: '/todo'},
+            {icon: sports2, name: '运动打卡', iconBackgroundColor: 'var(--ion-color-danger)'},
             {icon: rl, name: '日历', iconBackgroundColor: 'var(--ion-color-success)'}
         ]
     }
