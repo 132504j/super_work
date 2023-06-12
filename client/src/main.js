@@ -19,6 +19,8 @@ import './theme/vant.less'
 
 import VConsole from 'vconsole'
 import AppBase from '@/libs/AppBase'
+import AppTask from '@/libs/AppTask.js'
+import LocalNoticeTask from '@/tasks/LocalNoticeTask.js'
 
 new VConsole()
 
@@ -30,7 +32,9 @@ new VConsole()
         .use(router)
     router.isReady().then(() => {
         app.mount('#app')
+
+        // 加入定时任务
+        AppTask.addTask(LocalNoticeTask.create())
+        AppTask.start()
     })
 })()
-
-

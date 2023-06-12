@@ -119,7 +119,9 @@ const apps = ref([])
 const todayStatisticsRef = ref(null)
 
 const addNotice = () => {
-    AppLocalNotice.addNotice()
+    setTimeout(() => {
+        AppLocalNotice.addNotice()
+    }, 10000)
 }
 
 onMounted(async () => {

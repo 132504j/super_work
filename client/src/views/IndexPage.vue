@@ -13,6 +13,8 @@
 import {IonPage, IonContent, useIonRouter} from '@ionic/vue'
 import {onBeforeMount, onMounted} from 'vue'
 import {StatusBar, Style} from '@capacitor/status-bar'
+import AppBase from '@/libs/AppBase.js'
+import {showDialog} from 'vant'
 
 const ionRouter = useIonRouter()
 
@@ -27,7 +29,7 @@ onBeforeMount(() => {
 
 onMounted(() => {
     // 3秒后进入首页
-    setTimeout(() => {
+    setTimeout(async () => {
         ionRouter.replace('/home')
     }, 3000)
 })
