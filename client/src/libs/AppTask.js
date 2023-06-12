@@ -48,7 +48,6 @@ export default class AppTask {
         setInterval(() => {
             AppTask._appTasks.map(async (appTask) => {
                 try {
-                    console.log(appTask)
                     await appTask.run()
                 } catch (e) {
                     console.error(e.message)

@@ -21,6 +21,7 @@ import VConsole from 'vconsole'
 import AppBase from '@/libs/AppBase'
 import AppTask from '@/libs/AppTask.js'
 import LocalNoticeTask from '@/tasks/LocalNoticeTask.js'
+import AppStorage from '@/libs/AppStorage.js'
 
 new VConsole()
 
@@ -30,9 +31,8 @@ new VConsole()
             animated: (await AppBase.getAppDevice()) !== 'web'
         })
         .use(router)
-    router.isReady().then(() => {
+    router.isReady().then(async () => {
         app.mount('#app')
-
         // 加入定时任务
         AppTask.addTask(LocalNoticeTask.create())
         AppTask.start()
