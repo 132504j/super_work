@@ -36,7 +36,7 @@ export default class LocalNoticeTask extends AppTask {
                         title: task.title,
                         body: task.body,
                         schedule: {
-                            at: new Date(task.noticeTime || Date.now() + 1000 * 5),
+                            at: new Date(task.noticeTime ? (task.noticeTime < Date.now() ? Date.now() + 1000 * 5 : task.noticeTime) : Date.now() + 1000 * 5),
                             repeats: false
                         }
                     }
