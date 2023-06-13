@@ -10,7 +10,7 @@ export default class LocalNoticeTask extends AppTask {
      * 存在storage里面的key
      * @type {string}
      */
-    static appStorageKey = 'LOCAL_NOTICE_LIST_V2'
+    static appStorageKey = 'LOCAL_NOTICE_LIST'
 
     /**
      * 实例
