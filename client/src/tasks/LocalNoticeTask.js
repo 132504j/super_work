@@ -23,26 +23,22 @@ export default class LocalNoticeTask extends AppTask {
         // 这里执行一条通知任务
         const localNoticeList = await LocalNoticeTask._getLocalNoticeList()
         // 先找出到通知时间的通知
-        let task = localNoticeList.find(item => {
-            if (item.meta.isNotice === 'N' && item.noticeTime < Date.now()) {
+        const task = localNoticeList.find(item => {
+            if (item.meta.isNotice === 'N') {
                 return item
             }
         })
-        // 如果没有定时推送的消息，那么就找出第一未发送的消息（无指定时间的）
-        if (!task) {
-            task = localNoticeList.find(item => {
-                if (item.meta.isNotice === 'N' && !item.noticeTime) {
-                    return item
-                }
-            })
-        }
         if (task) {
             await LocalNotifications.schedule({
                 notifications: [
                     {
                         id: task.id,
                         title: task.title,
-                        body: task.body
+                        body: task.body,
+                        schedule: {
+                            at: new Date(task.noticeTime || Date.now() + 1000 * 5),
+                            repeats: false
+                        }
                     }
                 ]
             })

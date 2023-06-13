@@ -120,7 +120,7 @@ const todayStatisticsRef = ref(null)
 
 const addNotice = () => {
     AppLocalNotice.addNotice('测试', '一分钟后的内容', {
-        noticeTime: Date.now() + (1000 * 30)
+        // noticeTime: Date.now() + (1000 * 30)
     })
 }
 
