@@ -23,6 +23,7 @@
                     </template>
                     <template #right>
                         <img src="./images/theme.png" class="cover-icon" @click="isShowThemeList = true"/>
+                        <img src="./images/more.png" class="cover-icon" @click="isShowMore = true"/>
                     </template>
                 </van-nav-bar>
                 <div
@@ -150,17 +151,77 @@
                     </app-safe-bottom>
                 </van-popup>
             </div>
+
+            <van-action-sheet
+                    v-model:show="isShowMore"
+                    :actions="[
+                        {name: '历史任务'}
+                    ]"
+                    cancel-text="取消"
+                    close-on-click-action
+                    @select="item => {
+                        if(item.name === '历史任务') {
+                            isShowHistoryTask = true
+                        }
+                    }"
+            >
+
+            </van-action-sheet>
+
+            <van-popup v-model:show="isShowHistoryTask" position="bottom" round>
+                <div class="history-warp">
+                    <van-nav-bar title="历史任务" class="theme-nav-bar"></van-nav-bar>
+                    <div v-if="getHistoryTaskList.length" class="list">
+                        <template v-for="(item, index) in getHistoryTaskList" :key="index">
+                            <div>
+                                <div class="time" :class="{first: index === 0}">
+                                    {{ item.date }}
+                                </div>
+                                <div
+                                        v-for="(item, index) in item.taskList"
+                                        :key="item.id"
+                                        class="card"
+                                        :class="{
+                                            remove: !!item.remove
+                                        }"
+                                        :style="{
+                                            animationDelay: `${index * 100}ms`
+                                        }"
+                                >
+                                    <van-swipe-cell class="card-warp">
+                                        <div class="card-main">
+                                            <div class="left">
+                                                <van-icon name="circle" @click="() => finish(item)"/>
+                                            </div>
+                                            <div class="right">
+                                                <div class="content">{{ item.content }}</div>
+                                                <div class="other">任务</div>
+                                            </div>
+                                        </div>
+                                        <template #right>
+                                            <van-button type="danger" class="del-btn" @click="() => removeItem(item)">
+                                                <van-icon name="delete-o"></van-icon>
+                                            </van-button>
+                                        </template>
+                                    </van-swipe-cell>
+                                </div>
+                            </div>
+                        </template>
+                        <div style="height: 3rem"></div>
+                    </div>
+                    <van-empty v-else description="没有历史任务，继续保持！"/>
+                </div>
+            </van-popup>
         </ion-content>
     </ion-page>
 </template>
 
 <script setup async>
-import {IonPage, IonContent} from '@ionic/vue'
+import {IonContent, IonPage, useIonRouter} from '@ionic/vue'
 import VanNavBar from 'vant/es/nav-bar'
 import {computed, onBeforeMount, onBeforeUnmount, onMounted, ref} from 'vue'
 import {Style} from '@capacitor/status-bar'
 import VanIcon from 'vant/es/icon'
-import {useIonRouter} from '@ionic/vue'
 import AppSafeBottom from '@/components/AppSafeBottom.vue'
 import VanButton from 'vant/es/button'
 import AddTodo from '@/application/todo/utils/addTodo/AddTodo.js'
@@ -175,6 +236,9 @@ import AppBase from '@/libs/AppBase.js'
 import AppStatusBar from '@/components/AppStatusBar.js'
 import AppOfflineNotice from '@/libs/AppOfflineNotice.js'
 import {showToast} from 'vant'
+import VanActionSheet from 'vant/es/action-sheet'
+import VanEmpty from 'vant/es/empty'
+import AppStorage from '@/libs/AppStorage.js'
 
 const ionRouter = useIonRouter()
 
@@ -185,6 +249,8 @@ const listWarpRef = ref(null)
 const isShowTitle = ref(false)
 // 任务列表
 const taskList = ref([])
+// 全部任务列表
+const allTaskList = ref([])
 // 子标签
 const subTitle = ref(`${AppDate.format(new Date(), '_{m}月_{d}日').replace(/_0/g, '').replace(/_/g, '')} ${AppDate.getWeekStr(new Date())}`)
 // 是否显示已完成
@@ -198,7 +264,7 @@ const themeList = ref([
             backgroundColor: '#0b183b',
             style: Style.Light
         },
-        isChoose: false
+        isChoose: true
     },
     {
         name: '2',
@@ -225,6 +291,10 @@ const isShowThemeList = ref(false)
 const appDevice = ref('ios')
 // 是否为iphonex
 const isIphoneX = ref(false)
+// 是否显示菜单
+const isShowMore = ref(false)
+// 是否显示历史任务
+const isShowHistoryTask = ref(false)
 
 // methods
 /**
@@ -260,6 +330,7 @@ const finish = async (item) => {
     setTimeout(async () => {
         await TodoService.finish(item.id)
         taskList.value = await TodoService.getList({date: new Date})
+        allTaskList.value = await TodoService.getList()
     }, 300)
 }
 /**
@@ -272,6 +343,7 @@ const undo = async (item) => {
     setTimeout(async () => {
         await TodoService.undo(item.id)
         taskList.value = await TodoService.getList({date: new Date})
+        allTaskList.value = await TodoService.getList()
     }, 300)
 }
 /**
@@ -287,8 +359,8 @@ const chooseTheme = async (item) => {
     })
     const theme = themeList.value.find(v => v.name === item.name)
     theme.isChoose = true
-    AppStatusBar.set(theme.statusBar.backgroundColor, theme.statusBar.style)
-    localStorage.setItem('todoThemeName', item.name)
+    await AppStatusBar.set(theme.statusBar.backgroundColor, theme.statusBar.style)
+    await AppStorage.set('todoThemeName', item.name)
     isShowThemeList.value = false
 }
 
@@ -301,6 +373,16 @@ const getUndoTaskList = computed(() => {
 const getFinishTaskList = computed(() => {
     return taskList.value.filter(v => v.state === 'finish').sort((a, b) => b.finishStamp - a.finishStamp).reverse()
 })
+// 获取历史任务
+const getHistoryTaskList = computed(() => {
+    const taskList = allTaskList.value.filter(item => item.timestamp < new Date(AppDate.format(new Date(), '{y}/{m}/{d} 00:00:00')).getTime())
+    // const taskList = allTaskList.value
+    return Array.from(new Set(taskList.map(item => AppDate.format(new Date(item.timestamp), `_{m}月_{d}日`).replace(/_0/g, '').replace(/_/g, '')))).map(date => ({
+        date,
+        taskList: taskList.filter(item => AppDate.format(new Date(item.timestamp), `_{m}月_{d}日`).replace(/_0/g, '').replace(/_/g, '') === date).filter(item => item.state === 'undo').sort((a, b) => b.timestamp - a.timestamp)
+    })).filter(item => !!item.taskList.length)
+})
+
 // 获取当前主题
 const getNowTheme = computed(() => {
     if (!themeList.value.find(v => v.isChoose)) {
@@ -310,15 +392,17 @@ const getNowTheme = computed(() => {
 })
 
 // 生命周期
-onBeforeMount(() => {
+onBeforeMount(async () => {
     // 设定主题
-    if (!localStorage.getItem('todoThemeName')) {
-        localStorage.setItem('todoThemeName', themeList.value[0].name)
+    if (!await AppStorage.get('todoThemeName')) {
+        await AppStorage.set('todoThemeName', themeList.value[0].name)
     }
-    if (!themeList.value.find(v => v.name === localStorage.getItem('todoThemeName'))) {
-        localStorage.setItem('todoThemeName', themeList.value[0].name)
+    const todoThemeName = await AppStorage.get('todoThemeName')
+    if (!themeList.value.find(v => v.name === todoThemeName)) {
+        await AppStorage.set('todoThemeName', themeList.value[0].name)
     }
-    const theme = themeList.value.find(v => v.name === localStorage.getItem('todoThemeName'))
+    themeList.value.forEach(v => v.isChoose = false)
+    const theme = themeList.value.find(v => v.name === todoThemeName)
     theme.isChoose = true
     AppStatusBar.set(theme.statusBar.backgroundColor, theme.statusBar.style)
 })
@@ -327,6 +411,8 @@ onMounted(async () => {
     // 监听listWarpRef的滚动
     listWarpRef.value.addEventListener('scroll', listWarpRefHandleScroll)
     taskList.value = await TodoService.getList({date: new Date()})
+    allTaskList.value = await TodoService.getList()
+    console.log(JSON.parse(JSON.stringify(allTaskList.value)))
     AppBase.getAppDevice().then(device => {
         appDevice.value = device
         AppBase.isIphoneX().then(_isIphoneX => {
@@ -452,48 +538,6 @@ onBeforeUnmount(() => {
                 animation: itemHide .3s forwards;
                 animation-delay: 0ms !important;
             }
-
-            .card-main {
-                display: flex;
-                align-items: flex-start;
-                position: relative;
-                padding: 4px 0;
-
-                .left {
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    width: 3.4rem;
-                    height: 3.4rem;
-
-                    .van-icon {
-                        font-size: 1.5rem;
-                        color: #838383;
-                    }
-                }
-
-                .right {
-                    display: flex;
-                    flex-direction: column;
-                    justify-content: center;
-                    padding-right: 1rem;
-                    width: 100%;
-                    min-height: 3.4rem;
-
-                    .content {
-                        display: flex;
-                        align-items: center;
-                        font-size: 1rem;
-                        min-height: 2rem;
-                    }
-
-                    .other {
-                        height: 1.6em;
-                        color: #cccccc;
-                        font-size: 0.8rem;
-                    }
-                }
-            }
         }
     }
 
@@ -531,6 +575,48 @@ onBeforeUnmount(() => {
 .card-warp {
     margin: auto;
     width: 23rem;
+
+    .card-main {
+        display: flex;
+        align-items: flex-start;
+        position: relative;
+        padding: 4px 0;
+
+        .left {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 3.4rem;
+            height: 3.4rem;
+
+            .van-icon {
+                font-size: 1.5rem;
+                color: #838383;
+            }
+        }
+
+        .right {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding-right: 1rem;
+            width: 100%;
+            min-height: 3.4rem;
+
+            .content {
+                display: flex;
+                align-items: center;
+                font-size: 1rem;
+                min-height: 2rem;
+            }
+
+            .other {
+                height: 1.6em;
+                color: #cccccc;
+                font-size: 0.8rem;
+            }
+        }
+    }
 }
 
 .finish-warp {
@@ -560,6 +646,7 @@ onBeforeUnmount(() => {
 }
 
 .cover-icon {
+    margin-left: 1rem;
     width: 20px;
 }
 
@@ -616,6 +703,51 @@ onBeforeUnmount(() => {
                 object-fit: cover;
                 width: 4rem;
                 height: 4rem;
+            }
+        }
+    }
+}
+
+.history-warp {
+    height: 70vh;
+
+    .list {
+        height: calc(70vh - 56px);
+        overflow-y: auto;
+
+        .time {
+            margin-top: 1rem;
+            padding: 8px 1rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+
+            &.first {
+                margin-top: 0;
+            }
+        }
+
+        .card {
+            &.remove {
+                //background-color: red;
+                animation: itemHide .3s forwards;
+                animation-delay: 0ms !important;
+            }
+
+            &:nth-last-of-type(1) {
+                .card-main {
+                    border-bottom: none !important;
+                }
+            }
+
+            .card-warp {
+                .card-main {
+                    border-bottom: 1px #8a8a8a solid;
+                    border-radius: 0;
+                }
+
+                .del-btn {
+                    border-radius: 0;
+                }
             }
         }
     }

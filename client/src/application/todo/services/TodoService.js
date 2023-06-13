@@ -1,5 +1,6 @@
 import AppDate from '@/libs/AppDate.js'
 import Uuid from '@/utils/Uuid.js'
+import AppStorage from '@/libs/AppStorage.js'
 
 class Data {
     /**
@@ -15,11 +16,11 @@ class Data {
     _list = []
 
     async init() {
-        if (!localStorage.getItem('todoData')) {
-            localStorage.setItem('todoData', JSON.stringify(this._list))
+        if (!await AppStorage.get('todoData')) {
+            await AppStorage.set('todoData', JSON.stringify(this._list))
         } else {
             try {
-                this._list = JSON.parse(localStorage.getItem('todoData'))
+                this._list = JSON.parse(await AppStorage.get('todoData'))
             } catch (e) {
                 this._list = []
             }
@@ -50,7 +51,7 @@ class Data {
     }
 
     async _save() {
-        localStorage.setItem('todoData', JSON.stringify(this._list))
+        await AppStorage.set('todoData', JSON.stringify(this._list))
     }
 
     /**
